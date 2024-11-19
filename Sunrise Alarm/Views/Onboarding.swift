@@ -8,7 +8,6 @@ import SwiftUI
 
 struct Onboarding: View {
     @AppStorage("showOnboarding") var showOnboarding: Bool = true
-    @StateObject var purchaseManager = PurchaseManager()
     @State var page = 0
     
     var body: some View {
@@ -94,7 +93,7 @@ struct Onboarding: View {
                         Text("Notifications")
                             .font(.title3)
                             .fontWeight(.semibold)                        
-                        Text("Notifications must be enabled to hear your alarm. The app does not have to stay open.")
+                        Text("Notifications must be enabled to hear your alarm. Sunrise Alarm does not have to stay open.")
                             .foregroundStyle(.secondary)
                             .font(.callout)
                     }
@@ -104,7 +103,7 @@ struct Onboarding: View {
                         Text("Volume")
                             .font(.title3)
                             .fontWeight(.semibold)                        
-                        Text("Volume must be on. We can send a reminder at night if your phone is silenced.")
+                        Text("Volume must be turned on. You can be reminded at night if your phone is silenced.")
                             .foregroundStyle(.secondary)
                             .font(.callout)
                     }
@@ -185,8 +184,8 @@ struct Onboarding: View {
                     showOnboarding = false
                     Task {
                         do {
-                            try await purchaseManager.loadProducts()
-                            try await purchaseManager.purchase(purchaseManager.products[0])
+                            try await PurchaseManager.shared.loadProducts()
+                            try await PurchaseManager.shared.purchase(PurchaseManager.shared.products[0])
                         } catch {
                             print(error)
                         }

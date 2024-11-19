@@ -8,85 +8,65 @@ import SwiftUI
 import TipKit
 
 struct ContentView: View {
-    @State var alarm: AlarmModel
-    
-    @AppStorage("pro") var proAccess: Bool = false
-    @AppStorage("showOnboarding") var showOnboarding: Bool = false
-    @AppStorage("showWakeUp") var showWakeUp: Bool = false
-    
+    @State var model: Model
     var checkAlarm = checkAlarmTip()
     
     var body: some View {
         ZStack {
             
-            // City Name
+            // City
             HStack {
                 Image(systemName: "location.fill")
-                Text(alarm.sunrise?.cityName ?? "Loading Location")
-                    .onTapGesture {
-                        showOnboarding = true
-                    }
+                Text(model.alarm.city ?? "Loading Location")
             }
             .font(.footnote)
             .foregroundStyle(.secondary)
-            .padding(.top, 8)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .onTapGesture {
-                showOnboarding = true
-            }
+            .padding(.top)
+            .frame(maxHeight: .infinity, alignment: .top)
             
-            // Settings View
             HStack {
+                // Settings
                 Button {
-                    alarm.showSoundView.toggle()
+                    model.showSoundView.toggle()
                 } label: {
-                    Image(systemName: "sun.max.fill")
-                        .font(.title2)
-                        .foregroundColor(.orange)
-                        .fontWeight(.semibold)
-                        .padding(10)
-                        .background(Circle().foregroundStyle(.thinMaterial))
-                        .padding(.top)
+                    MainButton(
+                        image: "sun.max.fill",
+                        padding: 10,
+                        font: .title2
+                    )
                 }
                 
                 Spacer()
                 
-                // Alarm View
+                // Alarm
                 Button {
-                    alarm.showSettingsView.toggle()
-                    checkAlarm.invalidate(reason: .actionPerformed)
+                    model.showSettingsView.toggle()
+//                    checkAlarm.invalidate(reason: .actionPerformed)
                 } label: {
-                    Image(systemName: "alarm.fill")
-                        .font(.title3)
-                        .foregroundColor(.orange)
-                        .fontWeight(.semibold)
-                        .padding(13)
-                        .background(Circle().foregroundStyle(.thinMaterial))
-                        .padding(.top)
+                    MainButton(
+                        image: "alarm.fill",
+                        padding: 13,
+                        font: .title3
+                    )
                         .popoverTip(checkAlarm, arrowEdge: .bottom)
-                    
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .frame(maxHeight: .infinity, alignment: .bottom)
             .padding(.horizontal, 32)
             
-            // Sunrise Time
-            VStack {
-                Spacer()
+            VStack(spacing: 0) {
+                // Sunrise Tomorrow
                 HStack {
                     Image(systemName: "sunrise.fill")
-                        .offset(y: -2)
                         .font(.callout)
-                    Text(alarm.sunrise?.sunriseTime == nil ? "Loading Location" : "Sunrise Tomorow")
+                    Text("Sunrise Tomorow")
                 }
                 
+                // Sunrise Time
                 HStack {
                     Text("\(formattedSunriseTime)")
                         .font(.system(size: 116))
                         .fontWeight(.medium)
-                        .onTapGesture {
-                            showWakeUp = true
-                        }
                     
                     Text("AM")
                         .fontWeight(.medium)
@@ -94,28 +74,23 @@ struct ContentView: View {
                         .padding(.trailing, -16)
                 }
                 .fontDesign(.rounded)
-                .animation(.default, value: alarm.sunrise?.cityName)
+                .animation(.default, value: model.alarm.city)
                 
-                // Alarm Set
-                Toggle("", isOn: $alarm.settings.alarmSet)
-                    .controlSize(.large)
+                // Alarm Toggle
+                Toggle("", isOn: $model.alarm.isSet)
                     .toggleStyle(SwitchToggleStyle(tint: .orange))
                     .scaleEffect(1.4)
                     .frame(width: 50)
                     .padding(.trailing)
-                    .padding(.top, -64)
-                    .onChange(of: alarm.settings.alarmSet) {
-                        alarm.save()
+                    .onChange(of: model.alarm.isSet) {
+                        model.storage.saveAlarm(model.alarm) // FIX
                     }
-                
-                Spacer()
-                
             }
             .padding(.bottom, -16)
         }
-        .task {
-            if alarm.locationManager.authorizationStatus == .notDetermined {
-                alarm.locationManager.requestWhenInUseAuthorization()
+        .onAppear {
+            Task {
+                await model.updateSunriseInfo()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -130,49 +105,50 @@ struct ContentView: View {
                            center: .bottom,
                            startRadius: 0,
                            endRadius: 400)
-            .cornerRadius(56)
             .blur(radius: 50)
             .scaleEffect(1.1)
             .ignoresSafeArea()
         )
-        .sheet(isPresented: $alarm.showSoundView) {
-            SunriseAlarmView()
+        .sheet(isPresented: $model.showSoundView) {
+            SunriseAlarmView(model: model)
                 .pickerStyle(WheelPickerStyle())
                 .presentationCornerRadius(40)
                 .presentationBackground(.thinMaterial)
+                .accentColor(.orange)
         }
-        .sheet(isPresented: $alarm.showSettingsView) {
-            AlarmView(alarm: alarm)
+        .sheet(isPresented: $model.showSettingsView) {
+            AlarmView(model: model)
                 .presentationCornerRadius(40)
                 .presentationBackground(.thinMaterial)
+                .accentColor(.orange)
         }
         
-        .sheet(isPresented: $alarm.showAlarmSet) {
+        .sheet(isPresented: $model.showAlarmSet) {
             AlarmSet()
                 .presentationDetents([.fraction(3/10)])
                 .presentationCornerRadius(40)
                 .presentationBackground(.regularMaterial)
         }
-        .sheet(isPresented: $alarm.showPayWall) {
-            PayWall()
+        .sheet(isPresented: $model.showPaywall) {
+            Paywall()
                 .presentationDetents([.fraction(3/10)])
                 .presentationCornerRadius(40)
                 .presentationBackground(.regularMaterial)
         }
-        .fullScreenCover(isPresented: $showWakeUp) {
-            WakeUpView()
+        .fullScreenCover(isPresented: $model.showWakeUp) {
+            WakeUpView(model: model)
                 .presentationBackground(.regularMaterial)
         }
     }
     
     var formattedSunriseTime: String {
-        guard let alarm = alarm.sunrise else {
+        guard let alarm = model.alarm.sunriseTime else {
             return "0:00"
         }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "h:mm"
-        return dateFormatter.string(from: alarm.sunriseTime)
+        return dateFormatter.string(from: alarm)
     }
 }
 
@@ -208,7 +184,7 @@ struct AlarmSet: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(alarm: AlarmModel())
+        ContentView(model: Model())
     }
 }
 
@@ -219,6 +195,22 @@ struct checkAlarmTip: Tip {
     var message: Text? {
         Text("Make sure everything looks good for your alarm tomorrow.")
         
+    }
+}
+
+struct MainButton: View {
+    var image: String
+    var padding: CGFloat
+    var font: Font
+    
+    var body: some View {
+        Image(systemName: image)
+            .font(font)
+            .foregroundColor(.orange)
+            .fontWeight(.semibold)
+            .padding(padding)
+            .background(Circle().foregroundStyle(.thinMaterial))
+            .padding(.top)
     }
 }
 

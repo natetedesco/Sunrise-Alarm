@@ -12,9 +12,11 @@
 		8B44A6232BD8502200117714 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B44A6222BD8502200117714 /* Notifications.swift */; };
 		8B44A6272BD859A700117714 /* PayWall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B44A6262BD859A700117714 /* PayWall.swift */; };
 		8B53C03E2BD6E425004C2272 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B53C03D2BD6E425004C2272 /* Model.swift */; };
+		8B6B7F892CEC632600E119D2 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6B7F882CEC632600E119D2 /* Storage.swift */; };
+		8B6B7F8D2CEC791700E119D2 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6B7F8C2CEC791400E119D2 /* Location.swift */; };
+		8B6B7F8F2CED05D900E119D2 /* Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6B7F8E2CED05D700E119D2 /* Archive.swift */; };
 		8B72E8022BDDCA4D0068BC64 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B72E8012BDDCA4D0068BC64 /* Alarm.swift */; };
 		8B72E8052BDDE9EC0068BC64 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B72E8042BDDE9EB0068BC64 /* PurchaseManager.swift */; };
-		8BCAEF8E2BED583400F72791 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCAEF8D2BED583400F72791 /* Background.swift */; };
 		8BDBB9432BD595BA002DAE53 /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDBB9422BD595BA002DAE53 /* AlarmView.swift */; };
 		8BDBB9492BD5AFCB002DAE53 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDBB9482BD5AFCB002DAE53 /* Onboarding.swift */; };
 		8BEB93582BDF2AB3004805E9 /* Alarm1.aif in Resources */ = {isa = PBXBuildFile; fileRef = 8BEB93572BDF2AB3004805E9 /* Alarm1.aif */; };
@@ -31,10 +33,12 @@
 		8B44A6222BD8502200117714 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		8B44A6262BD859A700117714 /* PayWall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayWall.swift; sourceTree = "<group>"; };
 		8B53C03D2BD6E425004C2272 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		8B6B7F882CEC632600E119D2 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		8B6B7F8C2CEC791400E119D2 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		8B6B7F8E2CED05D700E119D2 /* Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archive.swift; sourceTree = "<group>"; };
 		8B72E8012BDDCA4D0068BC64 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
 		8B72E8032BDDE7ED0068BC64 /* Sun Alarm: Sunrise Alarm Clock.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Sun Alarm: Sunrise Alarm Clock.storekit"; sourceTree = "<group>"; };
 		8B72E8042BDDE9EB0068BC64 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
-		8BCAEF8D2BED583400F72791 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		8BDBB9422BD595BA002DAE53 /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 		8BDBB9482BD5AFCB002DAE53 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		8BDBB94A2BD5B009002DAE53 /* Sunrise-Alarm-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Sunrise-Alarm-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -92,9 +96,11 @@
 			children = (
 				8B72E8012BDDCA4D0068BC64 /* Alarm.swift */,
 				8B53C03D2BD6E425004C2272 /* Model.swift */,
-				8BCAEF8D2BED583400F72791 /* Background.swift */,
+				8B6B7F8C2CEC791400E119D2 /* Location.swift */,
 				8B44A6222BD8502200117714 /* Notifications.swift */,
+				8B6B7F882CEC632600E119D2 /* Storage.swift */,
 				8B72E8042BDDE9EB0068BC64 /* PurchaseManager.swift */,
+				8B6B7F8E2CED05D700E119D2 /* Archive.swift */,
 				8B0634422BD8310000D59EAF /* Views */,
 				F08AAE132A916CD500E82A36 /* Assets.xcassets */,
 				8BEB93572BDF2AB3004805E9 /* Alarm1.aif */,
@@ -194,8 +200,10 @@
 				F08AAE122A916CD500E82A36 /* ContentView.swift in Sources */,
 				8BDBB9492BD5AFCB002DAE53 /* Onboarding.swift in Sources */,
 				8B44A6232BD8502200117714 /* Notifications.swift in Sources */,
+				8B6B7F892CEC632600E119D2 /* Storage.swift in Sources */,
+				8B6B7F8F2CED05D900E119D2 /* Archive.swift in Sources */,
+				8B6B7F8D2CEC791700E119D2 /* Location.swift in Sources */,
 				8B0634442BD8310600D59EAF /* SettingsView.swift in Sources */,
-				8BCAEF8E2BED583400F72791 /* Background.swift in Sources */,
 				8B72E8052BDDE9EC0068BC64 /* PurchaseManager.swift in Sources */,
 				8B44A6272BD859A700117714 /* PayWall.swift in Sources */,
 				8B72E8022BDDCA4D0068BC64 /* Alarm.swift in Sources */,

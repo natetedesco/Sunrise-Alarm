@@ -9,12 +9,10 @@ import UserNotifications
 import AVFoundation
 
 @Observable class NotificationManager: NSObject, UNUserNotificationCenterDelegate  {
-    static let shared = NotificationManager()
+    var notifications: [UNNotificationRequest] = []
+    var authorizationStatus: UNAuthorizationStatus?
     
-    private(set) var notifications: [UNNotificationRequest] = []
-    private(set) var authorizationStatus: UNAuthorizationStatus?
-    
-    private override init() { super.init() }
+    override init() { super.init() }
     
     func setReminder(date: Date, repeats: Bool, id: String = "reminder") {
         let content = UNMutableNotificationContent()

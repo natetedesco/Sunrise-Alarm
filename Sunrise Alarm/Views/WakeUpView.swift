@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct WakeUpView: View {
-    @AppStorage("showWakeUp") var showWakeUp: Bool = false
+    @State var model: Model
     
     var body: some View {
         ZStack {
@@ -27,7 +27,7 @@ struct WakeUpView: View {
                 Spacer()
             }
             Button {
-                showWakeUp = false
+                model.showWakeUp = false
             } label: {
                 Text("Stop")
                     .font(.title)
@@ -46,5 +46,5 @@ struct WakeUpView: View {
 }
 
 #Preview {
-    WakeUpView()
+    WakeUpView(model: Model())
 }

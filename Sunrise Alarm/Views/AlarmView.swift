@@ -8,61 +8,42 @@ import SwiftUI
 import AVFoundation
 
 struct AlarmView: View {
-    @State var alarm: AlarmModel
-    @AppStorage("pro") var proAccess: Bool = true
-    @State var showPayWall = false
+    @State var model: Model
     
-    @Environment(\.dismiss) var dismiss
-    
-    @State var alarmOptions = ["Sunrise", "5 minutes before", "10 minutes before", "15 minutes before", "20 minutes before", "25 minutes before", "30 minutes before"]
-    @State var repeatingOptions = ["Never", "Everyday"]
-    @State var alarmSounds = ["Alarm 1", "Alarm 2"]
-
     var body: some View {
         NavigationView {
             VStack {
                 ScrollView {
                     VStack(alignment: .leading) {
-
-                        // General
-                        Text("Wake Up")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.secondary)
-                            .padding(.leading)
-//                            .frame(maxWidth: .infinity, alignment: .leading)
                         
+                        // General
+                        Headline(text: "Alarm Time")
                         VStack(spacing: 16) {
-                            
                             // Wake Up at
                             HStack {
-//                                Label("Wake up at", systemImage: "alarm.fill")
                                 Text("Wake up at")
                                 Spacer()
-                                Picker("", selection: $alarm.settings.alarmTime) {
+                                Picker("", selection: $model.alarm.time) {
                                     ForEach(alarmOptions, id: \.self) { option in
-                                        Text(option)
-                                    }
-                                }
-                                .padding(.trailing, -8)
-                            }
-                            .frame(height: 32)
-                            
-                            Divider().padding(.horizontal, -16)
-
-                            // Repeats
-                            HStack {
-//                                Label("Repeats", systemImage: "repeat")
-                                Text("Repeats")
-                                Spacer()
-                                Picker("", selection: $alarm.settings.repeating) {
-                                    ForEach(repeatingOptions, id: \.self) { option in
                                         Text(option)
                                     }
                                 }
                             }
                             .frame(height: 36)
                             
+                            Divider().padding(.horizontal, -16)
+                            
+                            // Repeats
+                            HStack {
+                                Text("Repeats")
+                                Spacer()
+                                Picker("", selection: $model.alarm.repeating) {
+                                    ForEach(repeatingOptions, id: \.self) { option in
+                                        Text(option)
+                                    }
+                                }
+                            }
+                            .frame(height: 36)
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -77,16 +58,12 @@ struct AlarmView: View {
                             .multilineTextAlignment(.leading)
                         
                         // Reminder
-                        Text("Day Before Reminder")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(.secondary)
-                            .padding(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        // Volume Reminder
+                        Headline(text: "Day Before Reminder")
                         VStack(spacing: 16) {
-                            Toggle(isOn: $alarm.settings.setAlarmReminder) { Text("Volume Reminder") }
+                            
+                            // Volume Reminder
+                            Toggle(isOn: $model.alarm.reminder) { Text("Volume Reminder") }
+                                .toggleStyle(SwitchToggleStyle(tint: Color.orange))
                                 .frame(height: 36)
                             
                             Divider().padding(.horizontal, -16)
@@ -94,7 +71,7 @@ struct AlarmView: View {
                             HStack {
                                 Text("Remind me at")
                                 Spacer()
-                                DatePicker("", selection: $alarm.settings.alarmReminderTime,
+                                DatePicker("", selection: $model.alarm.reminderTime,
                                            displayedComponents: .hourAndMinute
                                 )
                             }
@@ -112,13 +89,10 @@ struct AlarmView: View {
                             .padding(.bottom, 44)
                             .multilineTextAlignment(.leading)
                         
+                        // Sound
                         HStack {
-                            Text("Sound")
-                                .font(.footnote)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
+                            Headline(text: "Sound")
+                            Spacer()
                             Button {
 //                                AudioServicesPlaySystemSound(rawValue: "Alarm1.aif")
                             } label: {
@@ -127,12 +101,12 @@ struct AlarmView: View {
                             }
                             .padding(.trailing)
                         }
-                        .padding(.horizontal)
+                        
                         VStack(spacing: 16) {
                             HStack {
                                 Text("Alarm Sound")
                                 Spacer()
-                                Picker("Sounds", selection: $alarm.settings.alarmSound) {
+                                Picker("Sounds", selection: $model.alarm.sound) {
                                     ForEach(alarmSounds, id: \.self) { option in
                                         Text(option)
                                     }
@@ -140,22 +114,18 @@ struct AlarmView: View {
                                 .padding(.trailing, -8)
                             }
                             .frame(height: 36)
-                            
-                            
                         }
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(.black.opacity(0.3))
                         .cornerRadius(20)
-                        
-                        Spacer()
                     }
                 }
                 Button {
                     dismiss()
-                    alarm.settings.alarmSet = true
-                    alarm.save()
-                    alarm.setAlarm()
+                    model.alarm.isSet = true
+                    model.storage.saveAlarm(model.alarm)
+                    model.setAlarm()
                     UNUserNotificationCenter.current().requestAuthorization(options:[.badge,.sound,.alert]) { (_, _) in }
                 } label: {
                     Text("Set Alarm")
@@ -168,38 +138,53 @@ struct AlarmView: View {
             }
             .navigationTitle("Alarm")
             .navigationBarTitleDisplayMode(.inline)
-            .toggleStyle(SwitchToggleStyle(tint: Color.orange))
             .padding(.horizontal, 20)
-            .accentColor(.orange)
-            .sheet(isPresented: $showPayWall) {
-                PayWall()
+            .onChange(of: model.alarm.time) { model.showPaywall.toggle() }
+            .onChange(of: model.alarm.repeating) { model.showPaywall.toggle() }
+            .onChange(of: model.alarm.snooze) { model.showPaywall.toggle() }
+            .onChange(of: model.alarm.reminder) { model.showPaywall.toggle() }
+            .onChange(of: model.alarm.reminderTime) { model.showPaywall.toggle() }
+            .onChange(of: model.alarm.sound) { model.showPaywall.toggle() }
+            .onChange(of: model.alarm.volume) { model.showPaywall.toggle() }
+            .sheet(isPresented: $model.showPaywall) {
+                Paywall()
                     .presentationDetents([.fraction(4/10)])
                     .presentationCornerRadius(40)
                     .presentationBackground(.regularMaterial)
             }
-            .onChange(of: alarm.settings.alarmTime) { showPaywall() }
-            .onChange(of: alarm.settings.repeating) { showPaywall() }
-            .onChange(of: alarm.settings.snooze) { showPaywall() }
-            .onChange(of: alarm.settings.setAlarmReminder) { showPaywall() }
-            .onChange(of: alarm.settings.alarmReminderTime) { showPaywall() }
-            .onChange(of: alarm.settings.alarmSound) { showPaywall() }
-            .onChange(of: alarm.settings.volume) { showPaywall() }
         }
     }
+    
     func showPaywall() {
-        if !proAccess {
-            showPayWall = true
-            alarm.settings = defaultSettings
+        if !PurchaseManager.shared.proAccess {
+            model.showPaywall = true
+            //            model.settings = defaultSettings
         }
     }
-    var defaultSettings = Settings()
+    //    var defaultSettings = Settings()
+    
+    @Environment(\.dismiss) var dismiss
+}
+
+struct Headline: View {
+    var text: String
+    
+    var body: some View {
+        Text(text)
+            .font(.callout)
+            .fontWeight(.semibold)
+            .foregroundStyle(.secondary)
+            .padding(.leading)
+    }
 }
 
 #Preview {
-    ContentView(alarm: AlarmModel())
+    ContentView(model: Model())
         .sheet(isPresented: .constant(true)) {
-            AlarmView(alarm: AlarmModel())
+            AlarmView(model: Model())
                 .presentationCornerRadius(40)
                 .presentationBackground(.regularMaterial)
         }
 }
+
+

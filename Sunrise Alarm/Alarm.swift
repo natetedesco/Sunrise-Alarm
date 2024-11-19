@@ -5,43 +5,38 @@
 //
 
 import Foundation
-import CoreLocation
 
-
-struct Sunrise: Codable {
-    var cityName: String
-    var sunriseTime: Date
+struct Alarm: Codable, Equatable {
+    var isSet = false
     
-    let latitude: CLLocationDegrees
-    let longitude: CLLocationDegrees
+    var sunriseTime: Date?
+    var city: String?
     
-    init(location: CLLocation, cityName: String, sunriseTime: Date) {
-        latitude = location.coordinate.latitude
-        longitude = location.coordinate.longitude
-        self.cityName = cityName
-        self.sunriseTime = sunriseTime
-    }
-    
-    var location: CLLocation {
-        return CLLocation(latitude: latitude, longitude: longitude)
-    }
-}
-
-struct Settings: Codable, Equatable {
-    var alarmSet = false
-    var alarmTime = "Sunrise"
+    var time = "Sunrise"
     var repeating = "Never"
     var snooze = false
+    var reminder = false
+    var reminderTime = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
     
-    var setAlarmReminder = false
-    var alarmReminderTime = Calendar.current.date(from: DateComponents(hour: 20, minute: 0)) ?? Date()
-
-    var alarmSound = "Alarm 1"
-    var alarmSounds = ["Alarm 1", "Alarm 2"]
+    var sound = "Alarm 1"
+    var sounds = ["Alarm 1", "Alarm 2"]
     var volume: Double = 100
 }
 
-extension AlarmModel {
-    
-
-}
+var alarmOptions = [
+    "Sunrise",
+    "5 minutes before",
+    "10 minutes before",
+    "15 minutes before",
+    "20 minutes before",
+    "25 minutes before",
+    "30 minutes before"
+]
+var repeatingOptions = [
+    "Never",
+    "Everyday"
+]
+var alarmSounds = [
+    "Alarm 1",
+    "Alarm 2"
+]

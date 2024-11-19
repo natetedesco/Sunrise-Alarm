@@ -1,16 +1,14 @@
 //
 //  PayWall.swift
 //  Sunrise Alarm
-//
 //  Created by Developer on 4/23/24.
 //
 
 import SwiftUI
 import StoreKit
 
-struct PayWall: View {
+struct Paywall: View {
     @Environment(\.dismiss) var dismiss
-    @StateObject var purchaseManager = PurchaseManager()
 
     var body: some View {
         VStack {
@@ -30,8 +28,8 @@ struct PayWall: View {
                 dismiss()
                 Task {
                     do {
-                        try await purchaseManager.loadProducts()
-                        try await purchaseManager.purchase(purchaseManager.products[0])
+                        try await PurchaseManager.shared.loadProducts()
+                        try await PurchaseManager.shared.purchase(PurchaseManager.shared.products[0])
                     } catch {
                         print(error)
                     }
@@ -75,9 +73,9 @@ struct PayWall: View {
 }
 
 #Preview {
-    ContentView(alarm: AlarmModel())
+    ContentView(model: Model())
         .sheet(isPresented: .constant(true)) {
-            PayWall()
+            Paywall()
                 .presentationDetents([.fraction(4/10)])
                 .presentationCornerRadius(40)
                 .presentationBackground(.regularMaterial)

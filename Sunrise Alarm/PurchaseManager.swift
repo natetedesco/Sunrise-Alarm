@@ -8,18 +8,26 @@
 import StoreKit
 import SwiftUI
 
-@MainActor
-class PurchaseManager: ObservableObject {
-    @AppStorage("ProAccess") var proAccess: Bool = false
+@Observable class PurchaseManager {
+    static let shared = PurchaseManager()
+    private(set) var proAccess: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: "ProAccess")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "ProAccess")
+        }
+    }
     
     let productIds = ["sunrise_alarm_pro_yearly"]
-    private var productsLoaded = false
-    private var updates: Task<Void, Never>? = nil
-    @Published private(set) var products: [Product] = []
-    @Published private(set) var purchasedProductIDs = Set<String>()
-    @Published var selectedProduct: Product? = nil
+    var productsLoaded = false
+    var updates: Task<Void, Never>? = nil
     
-    init() {
+    var selectedProduct: Product? = nil
+    var products: [Product] = []
+    var purchasedProductIDs = Set<String>()
+    
+    private init() {
         updates = observeTransactionUpdates()
     }
     
@@ -41,17 +49,14 @@ class PurchaseManager: ObservableObject {
         case let .success(.verified(transaction)):
             await transaction.finish()
             await self.updatePurchasedProducts()
-        case .success(.unverified(_, _)):
-            print("success")
-            break
+        case .success(.unverified):
+            print("Purchase success but unverified")
         case .pending:
-            print("pending")
-            break
+            print("Purchase pending")
         case .userCancelled:
-            print("cancled")
-            break
+            print("Purchase cancelled")
         @unknown default:
-            break
+            print("Unknown purchase result")
         }
     }
     
@@ -60,14 +65,15 @@ class PurchaseManager: ObservableObject {
             guard case .verified(let transaction) = result else {
                 continue
             }
+            
             if transaction.revocationDate == nil {
                 self.purchasedProductIDs.insert(transaction.productID)
                 proAccess = true
-                print("success")
+                print("Pro access granted")
             } else {
                 self.purchasedProductIDs.remove(transaction.productID)
                 proAccess = false
-                print("failed")
+                print("Pro access revoked")
             }
         }
     }

@@ -1,7 +1,6 @@
 //
 //  SoundView.swift
 //  Sunrise Alarm
-//
 //  Created by Developer on 4/21/24.
 //
 
@@ -10,20 +9,18 @@ import MessageUI
 import TipKit
 
 struct SunriseAlarmView: View {
+    @State var model: Model
     @Environment(\.dismiss) var dismiss
     @Environment(\.requestReview) var requestReview
     @State var isShowingMailView = false
-    @State var showPayWall = false
-
     
     var body: some View {
         NavigationView {
             ScrollView {
-                
                 VStack(alignment: .leading, spacing: 16) {
                     
                     Button {
-                        showPayWall.toggle()
+                        model.showPaywall.toggle()
                     } label: {
                         Label("Unlock Pro", systemImage: "lock.open.fill")
                             .fontWeight(.medium)
@@ -136,8 +133,8 @@ struct SunriseAlarmView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showPayWall) {
-                PayWall()
+            .sheet(isPresented: $model.showPaywall) {
+                Paywall()
                     .presentationDetents([.fraction(4/10)])
                     .presentationCornerRadius(40)
                     .presentationBackground(.regularMaterial)
@@ -182,9 +179,9 @@ struct MailComposeViewControllerWrapper: UIViewControllerRepresentable {
 }
 
 #Preview {
-    ContentView(alarm: AlarmModel())
+    ContentView(model: Model())
         .sheet(isPresented: .constant(true)) {
-            SunriseAlarmView()
+            SunriseAlarmView(model: Model())
                 .presentationBackground(.regularMaterial)
                 .presentationCornerRadius(40)
         }

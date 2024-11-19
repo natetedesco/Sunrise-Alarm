@@ -1,176 +1,146 @@
-//
 //  Model.swift
 //  Sunrise Alarm
 //  Created by Developer on 4/22/24.
 //
 
 import Foundation
-import CoreLocation
-import WeatherKit
 import BackgroundTasks
 
-
-
-@Observable class AlarmModel: NSObject, CLLocationManagerDelegate {
-    var settings = Settings()
-    var sunrise: Sunrise?
+@Observable class Model {
+    var alarm = Alarm()
     
-    let locationManager = CLLocationManager()
-    let geocoder = CLGeocoder()
-    
-    var showSoundView = false
-    var showSettingsView = false
     var showAlarmSet = false
-    var showPayWall = false
+    var showSettingsView = false
+    var showWakeUp = false
+    var showSoundView = false
+    var showPaywall = false
     
-    let alarmKey = "LastSunriseAlarm"
-    let settingsKey = "SavedData"
+    let storage = Storage.shared
+    let notifications = NotificationManager()
+    let locationManager = LocationManager()
+    
+    init() {
+        print("Initializing Model")
+        self.alarm = storage.loadAlarm()
+        print("Loaded alarm: \(self.alarm)")
+    }
+    
+    func updateSunriseInfo() async {
+        print("Updating sunrise info")
+        if let location = locationManager.getCurrentLocation() {
+            print("Got current location: \(location)")
+            if let sunriseTime = await locationManager.getSunriseTime(for: location) {
+                print("Got sunrise time: \(sunriseTime)")
+                let city = await locationManager.getCityName(for: location)
+                print("Got city name: \(city)")
+                alarm.sunriseTime = sunriseTime
+                alarm.city = city
+                storage.saveAlarm(alarm)
+                print("Saved updated alarm: \(alarm)")
+            }
+        } else {
+            print("Failed to get current location")
+        }
+    }
+    
+    func setAlarm() {
+        print("Setting alarm")
+        alarm.isSet = true
+        storage.saveAlarm(alarm)
+        print("Alarm is set: \(alarm.isSet)")
+        
+        if let sunriseTime = alarm.sunriseTime {
+            notifications.setAlarm(date: sunriseTime)
+            print("Alarm set for \(sunriseTime)")
+        }
+        
+        if alarm.reminder {
+            notifications.setReminder(
+                date: alarm.reminderTime,
+                repeats: alarm.repeating.contains("Everyday"))
+            print("Reminder set for \(alarm.reminderTime), repeats: \(alarm.repeating.contains("Everyday"))")
+        }
+    }
+    
+    func turnOffAlarm() {
+        print("Turning off alarm")
+        alarm.isSet = false
+        storage.saveAlarm(alarm)
+        print("Alarm is set: \(alarm.isSet)")
+        notifications.removeAllPendingNotificationRequests()
+        BGTaskScheduler.shared.cancelAllTaskRequests()
+        print("Canceled all notifications and background tasks")
+    }
+}
+
+import CoreLocation
+import WeatherKit
+
+class LocationManager: NSObject, CLLocationManagerDelegate {
+    private let manager = CLLocationManager()
+    private let geocoder = CLGeocoder()
+    private var currentLocation: CLLocation?
     
     override init() {
         super.init()
-        
-        if let data = UserDefaults.standard.data(forKey: alarmKey) {
-            if let decoded = try? JSONDecoder().decode(Sunrise.self, from: data) {
-                self.sunrise = decoded
-            }
-        }
-        
-        if let data = UserDefaults.standard.data(forKey: settingsKey) {
-            if let decoded = try? JSONDecoder().decode(Settings.self, from: data) {
-                self.settings = decoded
-            }
-        }
-        
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
+        manager.delegate = self
+        manager.requestWhenInUseAuthorization()
+        print("LocationManager initialized and requested authorization")
     }
     
-    
-    // Save Alarm Settings
-    func save() {
-        if let encoded = try? JSONEncoder().encode(settings) {
-            UserDefaults.standard.set(encoded, forKey: settingsKey)
-        }
+    func getCurrentLocation() -> CLLocation? {
+        print("Current location: \(String(describing: currentLocation))")
+        return currentLocation
     }
     
-    // Set Alarm
-    func setAlarm() {
-        NotificationManager.shared.removeAllPendingNotificationRequests()
-        BGTaskScheduler.shared.cancelAllTaskRequests()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "d:h:mm"
-        
-        if let sunriseTime = sunrise?.sunriseTime {
-            NotificationManager.shared.setAlarm(date: sunriseTime)
-            print("Alarm Set for \(sunriseTime)")
-        }
-        
-        if settings.setAlarmReminder {
-            NotificationManager.shared.setReminder(
-                date: settings.alarmReminderTime,
-                repeats: settings.repeating.contains("Everyday"))
-            print("Reminder Set for \(settings.alarmReminderTime)")
-        }
-        
-        scheduleBackgroundTask()
-    }
-    
-    // Schedule Background Task
-    func scheduleBackgroundTask() {
-        
-        let request = BGAppRefreshTaskRequest(identifier: "com.sunriseAlarm.backgroundTask")
-        let date = Calendar.current.date(byAdding: .second, value: 10, to: Date())!
-        
-        request.earliestBeginDate = date
-        
+    func getSunriseTime(for location: CLLocation) async -> Date? {
+        print("Getting sunrise time for location: \(location)")
+        let weatherService = WeatherService()
         do {
-            try BGTaskScheduler.shared.submit(request)
-            NotificationManager.shared.setAlarm(date: Date())
-            print("Background task scheduled for \(date)")
-        } catch {
-            print("Failed to schedule background task: \(error)")
-        }
-    }
-    
-    // Background Task
-    func backgroundTask(task: BGAppRefreshTask) {
-        print("Task did run")
-        
-        if let location = sunrise?.location {
-            getSunriseTime(for: location) { sunriseTime in
-                NotificationManager.shared.setAlarm(date: sunriseTime!)
-                print("alarm set for \(String(describing: sunriseTime))")
-                task.setTaskCompleted(success: true)
-            }
-        }
-        
-        // Schedule Next Task
-        scheduleBackgroundTask()
-    }
-    
-    
-    func turnOffAlarm() {
-        NotificationManager.shared.removeAllPendingNotificationRequests()
-        BGTaskScheduler.shared.cancelAllTaskRequests()
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        getCityName(for: location) { [weak self] cityName in
-            self?.getSunriseTime(for: location) { sunriseTime in
-                self?.createAlarm(location: location, cityName: cityName, sunriseTime: sunriseTime)
-            }
-        }
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-            if manager.authorizationStatus == .authorizedWhenInUse {
-                locationManager.requestLocation()
-            }
-        }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Failed to get user location: \(error.localizedDescription)")
-    }
-
-    // Save Location & SunriseTime
-    func createAlarm(location: CLLocation, cityName: String, sunriseTime: Date?) {
-        guard let sunriseTime = sunriseTime else { return }
-        DispatchQueue.main.async {
-            self.sunrise = Sunrise(location: location, cityName: cityName, sunriseTime: sunriseTime)
+            let weather = try await weatherService.weather(for: location)
+            let now = Date()
+            let todaySunrise = weather.dailyForecast[0].sun.sunrise
             
-            if let encodedData = try? JSONEncoder().encode(self.sunrise) {
-                UserDefaults.standard.set(encodedData, forKey: self.alarmKey)
+            if now < todaySunrise ?? Date() {
+                return todaySunrise
+            }
+            
+            return weather.dailyForecast[1].sun.sunrise
+        } catch {
+            print("Failed to get sunrise time: \(error)")
+            return nil
+        }
+    }
+    
+    func getCityName(for location: CLLocation) async -> String {
+        print("Getting city name for location: \(location)")
+        return await withCheckedContinuation { continuation in
+            geocoder.reverseGeocodeLocation(location) { placemarks, error in
+                if let error = error {
+                    print("Failed to get city name: \(error)")
+                    continuation.resume(returning: "Unknown City")
+                } else {
+                    let city = placemarks?.first?.locality ?? "Unknown City"
+                    print("City name: \(city)")
+                    continuation.resume(returning: city)
+                }
             }
         }
     }
-
-    // Get City Name
-    func getCityName(for location: CLLocation, completion: @escaping (String) -> Void) {
-        geocoder.reverseGeocodeLocation(location) { placemarks, error in
-            guard let placemark = placemarks?.first else {
-                completion("Unknown City")
-                return
-            }
-            let cityName = placemark.locality ?? "Unknown City"
-            completion(cityName)
-        }
+    
+    // MARK: - CLLocationManagerDelegate
+    func requestLocation() {
+        print("Requesting location")
+        manager.requestLocation()
     }
-
-    // Get Sunrise Time
-    func getSunriseTime(for location: CLLocation, completion: @escaping (Date?) -> Void) {
-        Task {
-            let weatherService = WeatherService()
-            do {
-                // Access the forecast for tomorrow (index 1)
-                let weather = try await weatherService.weather(for: location)
-                let tomorrowForecast = weather.dailyForecast[1]
-                let sunEvents = tomorrowForecast.sun
-                completion(sunEvents.sunrise)
-            } catch {
-                completion(nil)
-            }
-        }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        currentLocation = locations.last
+        print("Updated current location: \(String(describing: currentLocation))")
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location error: \(error.localizedDescription)")
     }
 }
+
