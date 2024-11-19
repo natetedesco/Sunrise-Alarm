@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0634442BD8310600D59EAF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0634432BD8310600D59EAF /* SettingsView.swift */; };
+		8B44A6212BD8354F00117714 /* WakeUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B44A6202BD8354F00117714 /* WakeUpView.swift */; };
+		8B44A6232BD8502200117714 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B44A6222BD8502200117714 /* Notifications.swift */; };
+		8B44A6272BD859A700117714 /* PayWall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B44A6262BD859A700117714 /* PayWall.swift */; };
+		8B53C03E2BD6E425004C2272 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B53C03D2BD6E425004C2272 /* Model.swift */; };
+		8B72E8022BDDCA4D0068BC64 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B72E8012BDDCA4D0068BC64 /* Alarm.swift */; };
+		8B72E8052BDDE9EC0068BC64 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B72E8042BDDE9EB0068BC64 /* PurchaseManager.swift */; };
+		8BCAEF8E2BED583400F72791 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BCAEF8D2BED583400F72791 /* Background.swift */; };
+		8BDBB9432BD595BA002DAE53 /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDBB9422BD595BA002DAE53 /* AlarmView.swift */; };
+		8BDBB9492BD5AFCB002DAE53 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDBB9482BD5AFCB002DAE53 /* Onboarding.swift */; };
+		8BEB93582BDF2AB3004805E9 /* Alarm1.aif in Resources */ = {isa = PBXBuildFile; fileRef = 8BEB93572BDF2AB3004805E9 /* Alarm1.aif */; };
 		F08AAE102A916CD500E82A36 /* Sunrise_AlarmApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08AAE0F2A916CD500E82A36 /* Sunrise_AlarmApp.swift */; };
 		F08AAE122A916CD500E82A36 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08AAE112A916CD500E82A36 /* ContentView.swift */; };
 		F08AAE142A916CD500E82A36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08AAE132A916CD500E82A36 /* Assets.xcassets */; };
@@ -14,6 +25,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B0634432BD8310600D59EAF /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		8B1C7C3E2BD826C1002961AC /* Sunrise Alarm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Sunrise Alarm.entitlements"; sourceTree = "<group>"; };
+		8B44A6202BD8354F00117714 /* WakeUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeUpView.swift; sourceTree = "<group>"; };
+		8B44A6222BD8502200117714 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		8B44A6262BD859A700117714 /* PayWall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayWall.swift; sourceTree = "<group>"; };
+		8B53C03D2BD6E425004C2272 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		8B72E8012BDDCA4D0068BC64 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
+		8B72E8032BDDE7ED0068BC64 /* Sun Alarm: Sunrise Alarm Clock.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Sun Alarm: Sunrise Alarm Clock.storekit"; sourceTree = "<group>"; };
+		8B72E8042BDDE9EB0068BC64 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		8BCAEF8D2BED583400F72791 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		8BDBB9422BD595BA002DAE53 /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
+		8BDBB9482BD5AFCB002DAE53 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
+		8BDBB94A2BD5B009002DAE53 /* Sunrise-Alarm-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Sunrise-Alarm-Info.plist"; sourceTree = SOURCE_ROOT; };
+		8BEB93572BDF2AB3004805E9 /* Alarm1.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Alarm1.aif; sourceTree = "<group>"; };
 		F08AAE0C2A916CD500E82A36 /* Sunrise Alarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Sunrise Alarm.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F08AAE0F2A916CD500E82A36 /* Sunrise_AlarmApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sunrise_AlarmApp.swift; sourceTree = "<group>"; };
 		F08AAE112A916CD500E82A36 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -32,9 +57,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B0634422BD8310000D59EAF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F08AAE112A916CD500E82A36 /* ContentView.swift */,
+				8BDBB9422BD595BA002DAE53 /* AlarmView.swift */,
+				8B0634432BD8310600D59EAF /* SettingsView.swift */,
+				8B44A6202BD8354F00117714 /* WakeUpView.swift */,
+				8BDBB9482BD5AFCB002DAE53 /* Onboarding.swift */,
+				8B44A6262BD859A700117714 /* PayWall.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		F08AAE032A916CD400E82A36 = {
 			isa = PBXGroup;
 			children = (
+				F08AAE0F2A916CD500E82A36 /* Sunrise_AlarmApp.swift */,
 				F08AAE0E2A916CD500E82A36 /* Sunrise Alarm */,
 				F08AAE0D2A916CD500E82A36 /* Products */,
 			);
@@ -51,9 +90,17 @@
 		F08AAE0E2A916CD500E82A36 /* Sunrise Alarm */ = {
 			isa = PBXGroup;
 			children = (
-				F08AAE0F2A916CD500E82A36 /* Sunrise_AlarmApp.swift */,
-				F08AAE112A916CD500E82A36 /* ContentView.swift */,
+				8B72E8012BDDCA4D0068BC64 /* Alarm.swift */,
+				8B53C03D2BD6E425004C2272 /* Model.swift */,
+				8BCAEF8D2BED583400F72791 /* Background.swift */,
+				8B44A6222BD8502200117714 /* Notifications.swift */,
+				8B72E8042BDDE9EB0068BC64 /* PurchaseManager.swift */,
+				8B0634422BD8310000D59EAF /* Views */,
 				F08AAE132A916CD500E82A36 /* Assets.xcassets */,
+				8BEB93572BDF2AB3004805E9 /* Alarm1.aif */,
+				8B1C7C3E2BD826C1002961AC /* Sunrise Alarm.entitlements */,
+				8B72E8032BDDE7ED0068BC64 /* Sun Alarm: Sunrise Alarm Clock.storekit */,
+				8BDBB94A2BD5B009002DAE53 /* Sunrise-Alarm-Info.plist */,
 				F08AAE152A916CD500E82A36 /* Preview Content */,
 			);
 			path = "Sunrise Alarm";
@@ -83,6 +130,8 @@
 			dependencies = (
 			);
 			name = "Sunrise Alarm";
+			packageProductDependencies = (
+			);
 			productName = "Sunrise Alarm";
 			productReference = F08AAE0C2A916CD500E82A36 /* Sunrise Alarm.app */;
 			productType = "com.apple.product-type.application";
@@ -95,7 +144,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					F08AAE0B2A916CD400E82A36 = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -111,6 +160,8 @@
 				Base,
 			);
 			mainGroup = F08AAE032A916CD400E82A36;
+			packageReferences = (
+			);
 			productRefGroup = F08AAE0D2A916CD500E82A36 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -125,6 +176,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BEB93582BDF2AB3004805E9 /* Alarm1.aif in Resources */,
 				F08AAE172A916CD500E82A36 /* Preview Assets.xcassets in Resources */,
 				F08AAE142A916CD500E82A36 /* Assets.xcassets in Resources */,
 			);
@@ -137,7 +189,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BDBB9432BD595BA002DAE53 /* AlarmView.swift in Sources */,
+				8B44A6212BD8354F00117714 /* WakeUpView.swift in Sources */,
 				F08AAE122A916CD500E82A36 /* ContentView.swift in Sources */,
+				8BDBB9492BD5AFCB002DAE53 /* Onboarding.swift in Sources */,
+				8B44A6232BD8502200117714 /* Notifications.swift in Sources */,
+				8B0634442BD8310600D59EAF /* SettingsView.swift in Sources */,
+				8BCAEF8E2BED583400F72791 /* Background.swift in Sources */,
+				8B72E8052BDDE9EC0068BC64 /* PurchaseManager.swift in Sources */,
+				8B44A6272BD859A700117714 /* PayWall.swift in Sources */,
+				8B72E8022BDDCA4D0068BC64 /* Alarm.swift in Sources */,
+				8B53C03E2BD6E425004C2272 /* Model.swift in Sources */,
 				F08AAE102A916CD500E82A36 /* Sunrise_AlarmApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,6 +243,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -241,6 +304,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -264,23 +328,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Sunrise Alarm/Sunrise Alarm.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Sunrise Alarm/Preview Content\"";
 				DEVELOPMENT_TEAM = AMU2LP62W2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Sunrise-Alarm-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sun Alarm";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Sunrise Alarm needs your location.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "NateTedesco.Sunrise-Alarm";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NateTedesco.Sunrise-Alarm";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -293,23 +363,29 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Sunrise Alarm/Sunrise Alarm.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Sunrise Alarm/Preview Content\"";
 				DEVELOPMENT_TEAM = AMU2LP62W2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Sunrise-Alarm-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sun Alarm";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Sunrise Alarm needs your location.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "NateTedesco.Sunrise-Alarm";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.NateTedesco.Sunrise-Alarm";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
