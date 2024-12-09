@@ -7,18 +7,17 @@
 import Foundation
 
 class Storage {
-    static let shared = Storage()
-    private init() {}
     
-    func saveAlarm(_ alarm: Alarm) {
+    func save(_ alarm: Alarm) {
         if let encoded = try? JSONEncoder().encode(alarm) {
             UserDefaults.standard.set(encoded, forKey: "Alarm")
         }
     }
     
-    func loadAlarm() -> Alarm {
+    func load() -> Alarm {
         guard let data = UserDefaults.standard.data(forKey: "Alarm"),
               let alarm = try? JSONDecoder().decode(Alarm.self, from: data) else {
+            print("New Alarm Create")
             return Alarm()
         }
         return alarm

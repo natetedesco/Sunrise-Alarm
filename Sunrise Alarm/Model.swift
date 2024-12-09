@@ -1,146 +1,104 @@
+//
 //  Model.swift
 //  Sunrise Alarm
 //  Created by Developer on 4/22/24.
 //
 
 import Foundation
-import BackgroundTasks
+import CoreLocation
 
 @Observable class Model {
-    var alarm = Alarm()
+    var storage: Storage
+    var purchases: Purchases
+    var notifications: Notifications
+    var locationService: LocationService
     
-    var showAlarmSet = false
-    var showSettingsView = false
+    var alarm: Alarm  
     var showWakeUp = false
-    var showSoundView = false
-    var showPaywall = false
+    var activeSheet: Sheet?
     
-    let storage = Storage.shared
-    let notifications = NotificationManager()
-    let locationManager = LocationManager()
-    
-    init() {
-        print("Initializing Model")
-        self.alarm = storage.loadAlarm()
-        print("Loaded alarm: \(self.alarm)")
-    }
-    
-    func updateSunriseInfo() async {
-        print("Updating sunrise info")
-        if let location = locationManager.getCurrentLocation() {
-            print("Got current location: \(location)")
-            if let sunriseTime = await locationManager.getSunriseTime(for: location) {
-                print("Got sunrise time: \(sunriseTime)")
-                let city = await locationManager.getCityName(for: location)
-                print("Got city name: \(city)")
-                alarm.sunriseTime = sunriseTime
-                alarm.city = city
-                storage.saveAlarm(alarm)
-                print("Saved updated alarm: \(alarm)")
-            }
-        } else {
-            print("Failed to get current location")
-        }
-    }
-    
-    func setAlarm() {
-        print("Setting alarm")
-        alarm.isSet = true
-        storage.saveAlarm(alarm)
-        print("Alarm is set: \(alarm.isSet)")
+    init(
+        alarm: Alarm = Alarm(),
+        storage: Storage = Storage(),
+        purchases: Purchases = .shared,
+        notifications: Notifications = Notifications(),
+        locationService: LocationService = LocationService()
+    ) {
+        self.alarm = alarm
+        self.storage = storage
+        self.purchases = purchases
+        self.notifications = notifications
+        self.locationService = locationService
         
-        if let sunriseTime = alarm.sunriseTime {
-            notifications.setAlarm(date: sunriseTime)
-            print("Alarm set for \(sunriseTime)")
-        }
+        loadAlarm()
+        shouldShowWakeView()
+        checkAlarm()
+    }
+    
+    // load
+    func loadAlarm() {
+        self.alarm = storage.load()
+    }
+    
+    // Set Alarm
+    func setAlarm() {
+        guard let sunrise = locationService.sunrise else { return }
+        let alarmTime = getAdjustedTime(for: sunrise, selectedTime: alarm.selectedTime)
+        
+        alarm.time = alarmTime
+        notifications.setAlarm(date: alarmTime)
         
         if alarm.reminder {
-            notifications.setReminder(
-                date: alarm.reminderTime,
-                repeats: alarm.repeating.contains("Everyday"))
-            print("Reminder set for \(alarm.reminderTime), repeats: \(alarm.repeating.contains("Everyday"))")
+            notifications.setReminder(date: alarm.reminderTime)
+        }
+        
+        storage.save(alarm)
+    }
+    
+    // Stop Alarm
+    func stopAlarm() {
+        notifications.turnOff()
+        showWakeUp = false
+        
+        setAlarm()
+    }
+    
+    // Toggle Alarm
+    func toggleAlarm() {
+        if alarm.isSet {
+            setAlarm()
+        } else {
+            notifications.turnOff()
+            storage.save(alarm)
         }
     }
     
-    func turnOffAlarm() {
-        print("Turning off alarm")
-        alarm.isSet = false
-        storage.saveAlarm(alarm)
-        print("Alarm is set: \(alarm.isSet)")
-        notifications.removeAllPendingNotificationRequests()
-        BGTaskScheduler.shared.cancelAllTaskRequests()
-        print("Canceled all notifications and background tasks")
-    }
-}
-
-import CoreLocation
-import WeatherKit
-
-class LocationManager: NSObject, CLLocationManagerDelegate {
-    private let manager = CLLocationManager()
-    private let geocoder = CLGeocoder()
-    private var currentLocation: CLLocation?
-    
-    override init() {
-        super.init()
-        manager.delegate = self
-        manager.requestWhenInUseAuthorization()
-        print("LocationManager initialized and requested authorization")
-    }
-    
-    func getCurrentLocation() -> CLLocation? {
-        print("Current location: \(String(describing: currentLocation))")
-        return currentLocation
-    }
-    
-    func getSunriseTime(for location: CLLocation) async -> Date? {
-        print("Getting sunrise time for location: \(location)")
-        let weatherService = WeatherService()
-        do {
-            let weather = try await weatherService.weather(for: location)
-            let now = Date()
-            let todaySunrise = weather.dailyForecast[0].sun.sunrise
-            
-            if now < todaySunrise ?? Date() {
-                return todaySunrise
-            }
-            
-            return weather.dailyForecast[1].sun.sunrise
-        } catch {
-            print("Failed to get sunrise time: \(error)")
-            return nil
+    // Should show wake up?
+    func shouldShowWakeView() {
+        if alarm.isSet && Date() > alarm.time ?? Date() {
+            print("last alarm \(formatTime(alarm.time ?? Date()))")
+            showWakeUp = true
         }
     }
     
-    func getCityName(for location: CLLocation) async -> String {
-        print("Getting city name for location: \(location)")
-        return await withCheckedContinuation { continuation in
-            geocoder.reverseGeocodeLocation(location) { placemarks, error in
-                if let error = error {
-                    print("Failed to get city name: \(error)")
-                    continuation.resume(returning: "Unknown City")
+    // Check initial Alarm
+    func checkAlarm() {
+        if alarm.isSet {
+            Task {
+                let scheduledNotifications = await notifications.hasScheduledNotifications()
+                let notificationTimes = await notifications.getScheduledNotificationTimes()
+                
+                if !scheduledNotifications {
+                    print("No notifications set")
                 } else {
-                    let city = placemarks?.first?.locality ?? "Unknown City"
-                    print("City name: \(city)")
-                    continuation.resume(returning: city)
+                    for (index, notification) in notificationTimes.enumerated() {
+                        if index >= 2 { break }
+                        print("Notification set for: \(formatTime(notification))am")
+                    }
                 }
             }
+        } else {
+            print("Alarm is not set")
         }
     }
-    
-    // MARK: - CLLocationManagerDelegate
-    func requestLocation() {
-        print("Requesting location")
-        manager.requestLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        currentLocation = locations.last
-        print("Updated current location: \(String(describing: currentLocation))")
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Location error: \(error.localizedDescription)")
-    }
 }
-

@@ -4,28 +4,23 @@
 //  Created by Developer on 4/27/24.
 //
 
-
 import StoreKit
 import SwiftUI
 
-@Observable class PurchaseManager {
-    static let shared = PurchaseManager()
-    private(set) var proAccess: Bool {
-        get {
-            UserDefaults.standard.bool(forKey: "ProAccess")
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "ProAccess")
-        }
-    }
+class Purchases: ObservableObject {
+    static let shared = Purchases()
+    
+    @AppStorage("proAccess") var proAccess: Bool = false
+    @AppStorage("showOnboarding") var showOnboarding: Bool = true
+    @Published var showPaywall = false
+
+    @Published var updates: Task<Void, Never>? = nil
+    @Published var productsLoaded = false
+    @Published var products: [Product] = []
+    @Published var purchasedProductIDs = Set<String>()
+    @Published var selectedProduct: Product? = nil
     
     let productIds = ["sunrise_alarm_pro_yearly"]
-    var productsLoaded = false
-    var updates: Task<Void, Never>? = nil
-    
-    var selectedProduct: Product? = nil
-    var products: [Product] = []
-    var purchasedProductIDs = Set<String>()
     
     private init() {
         updates = observeTransactionUpdates()
@@ -36,10 +31,10 @@ import SwiftUI
     }
     
     func loadProducts() async throws {
-        guard !self.productsLoaded else { return }
-        self.products = try await Product.products(for: productIds)
-        self.selectedProduct = products[0]
-        self.productsLoaded = true
+        guard !productsLoaded else { return }
+        products = try await Product.products(for: productIds)
+        selectedProduct = products[0]
+        productsLoaded = true
     }
     
     func purchase(_ product: Product) async throws {
@@ -67,11 +62,11 @@ import SwiftUI
             }
             
             if transaction.revocationDate == nil {
-                self.purchasedProductIDs.insert(transaction.productID)
+                purchasedProductIDs.insert(transaction.productID)
                 proAccess = true
                 print("Pro access granted")
             } else {
-                self.purchasedProductIDs.remove(transaction.productID)
+                purchasedProductIDs.remove(transaction.productID)
                 proAccess = false
                 print("Pro access revoked")
             }
